@@ -1,0 +1,121 @@
+2026-05-25 20:04:54,110 - easytorch-env - INFO - Use devices 0.
+2026-05-25 20:04:55,243 - easytorch-env - INFO - Disable TF32 mode
+2026-05-25 20:04:55,245 - easytorch - INFO - Set ckpt save dir: 'checkpoints/RAST/PEMS04_mcpf_e30_seed2_12_12/32753c1f4c2b591d056583ae841acdcd'
+2026-05-25 20:04:55,245 - easytorch - INFO - Building model.
+2026-05-25 20:04:55,793 - rast-mcpf-export - INFO - Initializing validation.
+2026-05-25 20:04:55,793 - rast-mcpf-export - INFO - Building val data loader.
+2026-05-25 20:04:55,801 - rast-mcpf-export - INFO - Validation dataset length: 3375
+2026-05-25 20:04:55,810 - rast-mcpf-export - INFO - Test dataset length: 3375
+2026-05-25 20:04:55,810 - rast-mcpf-export - INFO - Loading checkpoint checkpoints/RAST/PEMS04_mcpf_e30_seed2_12_12/32753c1f4c2b591d056583ae841acdcd/RAST_best_val_MAE.pt
+2026-05-25 20:04:55,810 - rast-mcpf-export - INFO - Loading Checkpoint from 'checkpoints/RAST/PEMS04_mcpf_e30_seed2_12_12/32753c1f4c2b591d056583ae841acdcd/RAST_best_val_MAE.pt'
+DESCRIPTION: Train RAST on PEMS04 dataset
+GPU_NUM: 1
+RUNNER: <class 'basicts.runners.runner_zoo.simple_tsf_runner.SimpleTimeSeriesForecastingRunner'>
+DATASET:
+  NAME: PEMS04
+  TYPE: <class 'basicts.data.simple_tsf_dataset.TimeSeriesForecastingDataset'>
+  PARAM:
+    dataset_name: PEMS04
+    train_val_test_ratio: [0.6, 0.2, 0.2]
+    input_len: 12
+    output_len: 12
+SCALER:
+  TYPE: <class 'basicts.scaler.z_score_scaler.ZScoreScaler'>
+  PARAM:
+    dataset_name: PEMS04
+    train_ratio: 0.6
+    norm_each_channel: False
+    rescale: True
+MODEL:
+  NAME: RAST
+  ARCH: <class 'src.arch.rast_arch.RAST'>
+  PARAM:
+    num_nodes: 307
+    supports: [tensor([[0., 0., 0.,  ..., 0., 0., 0.],
+        [0., 0., 0.,  ..., 0., 0., 0.],
+        [0., 0., 0.,  ..., 0., 0., 0.],
+        ...,
+        [0., 0., 0.,  ..., 0., 0., 0.],
+        [0., 0., 0.,  ..., 0., 0., 0.],
+        [0., 0., 0.,  ..., 0., 0., 0.]]), tensor([[0., 0., 0.,  ..., 0., 0., 0.],
+        [0., 0., 0.,  ..., 0., 0., 0.],
+        [0., 0., 0.,  ..., 0., 0., 0.],
+        ...,
+        [0., 0., 0.,  ..., 0., 0., 0.],
+        [0., 0., 0.,  ..., 0., 0., 0.],
+        [0., 0., 0.,  ..., 0., 0., 0.]])]
+    input_len: 12
+    output_len: 12
+    input_dim: 3
+    output_dim: 1
+    dropout: 0.1
+    patch_size: 32
+    stride: 16
+    factor: 3
+    gap: 3
+    output_type: full
+    device_id: 0
+    timing_mode: False
+    use_amp: False
+    query_dim: 256
+    retrieval_dim: 128
+    update_interval: 10
+    encoder_layers: 3
+    database_path: checkpoints/RAST/PEMS04_mcpf_e30_seed2_12_12
+  FORWARD_FEATURES: [0, 1, 2]
+  TARGET_FEATURES: [0]
+METRICS:
+  FUNCS:
+    MAE: masked_mae
+    MAPE: masked_mape
+    RMSE: masked_rmse
+  TARGET: MAE
+  NULL_VAL: 0.0
+TRAIN:
+  NUM_EPOCHS: 30
+  CKPT_SAVE_DIR: checkpoints/RAST/PEMS04_mcpf_e30_seed2_12_12
+  LOSS: masked_mae
+  OPTIM:
+    TYPE: Adam
+    PARAM:
+      lr: 0.002
+      weight_decay: 0.0001
+      eps: 1e-08
+  LR_SCHEDULER:
+    TYPE: MultiStepLR
+    PARAM:
+      milestones: [1, 30, 38, 46, 54, 62, 70, 80]
+      gamma: 0.5
+  DATA:
+    BATCH_SIZE: 128
+    SHUFFLE: True
+  CLIP_GRAD_PARAM:
+    max_norm: 5.0
+  CL:
+    WARM_EPOCHS: 30
+    CL_EPOCHS: 3
+    PREDICTION_LENGTH: 12
+VAL:
+  INTERVAL: 1
+  DATA:
+    BATCH_SIZE: 128
+TEST:
+  INTERVAL: 1
+  DATA:
+    BATCH_SIZE: 128
+EVAL:
+  HORIZONS: [3, 6, 12]
+  USE_GPU: True
+ENV:
+  TF32: False
+  SEED: 2
+  DETERMINISTIC: False
+
+Output type: full
+Database path: checkpoints/RAST/PEMS04_mcpf_e30_seed2_12_12
+Error initializing GPU FAISS: module 'faiss' has no attribute 'StandardGpuResources', falling back to CPU
+valid:   0%|          | 0/27 [00:00<?, ?it/s]valid:   4%|▎         | 1/27 [00:00<00:12,  2.00it/s]valid:  11%|█         | 3/27 [00:00<00:04,  5.14it/s]valid:  19%|█▊        | 5/27 [00:00<00:03,  7.24it/s]valid:  26%|██▌       | 7/27 [00:01<00:02,  8.81it/s]valid:  33%|███▎      | 9/27 [00:01<00:01,  9.20it/s]valid:  41%|████      | 11/27 [00:01<00:01, 10.15it/s]valid:  48%|████▊     | 13/27 [00:01<00:01, 10.69it/s]valid:  56%|█████▌    | 15/27 [00:01<00:01, 11.22it/s]valid:  63%|██████▎   | 17/27 [00:01<00:00, 11.41it/s]valid:  70%|███████   | 19/27 [00:02<00:00, 12.06it/s]valid:  78%|███████▊  | 21/27 [00:02<00:00, 12.26it/s]valid:  85%|████████▌ | 23/27 [00:02<00:00, 12.41it/s]valid:  93%|█████████▎| 25/27 [00:02<00:00, 12.22it/s]valid: 100%|██████████| 27/27 [00:02<00:00, 12.64it/s]valid: 100%|██████████| 27/27 [00:02<00:00, 10.24it/s]
+test:   0%|          | 0/27 [00:00<?, ?it/s]test:   7%|▋         | 2/27 [00:00<00:01, 15.68it/s]test:  15%|█▍        | 4/27 [00:00<00:01, 12.66it/s]test:  22%|██▏       | 6/27 [00:00<00:01, 12.68it/s]test:  30%|██▉       | 8/27 [00:00<00:01, 13.93it/s]test:  37%|███▋      | 10/27 [00:00<00:01, 14.41it/s]test:  44%|████▍     | 12/27 [00:00<00:01, 13.79it/s]test:  52%|█████▏    | 14/27 [00:01<00:00, 13.63it/s]test:  59%|█████▉    | 16/27 [00:01<00:00, 13.22it/s]test:  67%|██████▋   | 18/27 [00:01<00:00, 13.48it/s]test:  74%|███████▍  | 20/27 [00:01<00:00, 13.64it/s]test:  81%|████████▏ | 22/27 [00:01<00:00, 13.03it/s]test:  89%|████████▉ | 24/27 [00:01<00:00, 12.71it/s]test:  96%|█████████▋| 26/27 [00:01<00:00, 13.03it/s]test: 100%|██████████| 27/27 [00:02<00:00, 13.38it/s]
+Saved /root/autodl-tmp/TimeSeralDetect/experiments/mcpf/rast_runs/rast_3seed_trueiso_fix_20260525_181605/PEMS04_seed2/pems04_seed2_predictions.npz
+val_pred=(3375, 12, 307) val_y=(3375, 12, 307) val_x=(3375, 12, 307)
+test_pred=(3375, 12, 307) test_y=(3375, 12, 307) test_x=(3375, 12, 307)
