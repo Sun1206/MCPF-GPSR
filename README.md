@@ -1,14 +1,11 @@
-# MCPF-GPSR ICDM 2026 Reproducibility Package
+# MCPF-GPSR: Graph-Periodic Surplus Residual Calibration for Public Graph Time-Series Forecasting
+
 
 This folder contains the code, data snapshots, saved parent predictions, available trained checkpoints, and result CSV files used by the paper:
 
 **MCPF-GPSR: Graph-Periodic Surplus Residual Calibration for Public Graph Time-Series Forecasting**
 
 All commands below are written relative to this package root:
-
-```powershell
-cd artifacts\mcpf_gpsr_icdm2026_repro_package
-```
 
 ## 1. Package Layout
 
